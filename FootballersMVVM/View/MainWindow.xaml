@@ -1,0 +1,92 @@
+﻿<Window x:Class="FootballersMVVM.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:local="clr-namespace:FootballersMVVM"
+        xmlns:converterNS="clr-namespace:FootballersMVVM.Converter"
+        xmlns:myBox="clr-namespace:FootballersMVVM.View"
+
+        mc:Ignorable="d"
+        
+       Title="MainWindow" Height="450" Width="800" >
+    <Window.Resources>
+        <converterNS:Converter x:Key="converter"/>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Save}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel x:Name="StackPanelForm" Grid.Column="0">
+            <Grid DataContext="{Binding DisplayedPlayer}">
+                <Grid.ColumnDefinitions>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="TextBlockName" Text="Imie:" FontSize="19" Margin="15,15,5,5" Grid.Row="0"/>
+                <myBox:TextBoxWithErrorProvider x:Name="TextBoxName" Text="{Binding Name, Mode= TwoWay}" 
+                         Height="30px" Width="200" HorizontalAlignment="Left" Margin="15,5,5,5" FontSize="19" Background="#FFCECECE" Grid.Row="1"/>
+                <TextBlock x:Name="TextBlockSurname" Text="Nazwisko:" FontSize="19" Margin="15,5,5,5" Grid.Row="2"/>
+                <myBox:TextBoxWithErrorProvider x:Name="TextBoxSurname" Text="{Binding Surname, Mode= TwoWay}"
+                         Height="30px" Width="200" HorizontalAlignment="Left"  Margin="15,5,5,5" FontSize="19" Background="#FFCECECE" Grid.Row="3"/>
+                <TextBlock x:Name="TextBlockWiek" Text="Wiek:" FontSize="19" Margin="15,5,5,5" Grid.Row="4"/>
+                <StackPanel HorizontalAlignment="Left" Margin="15,5,0,10" Orientation="Vertical" Grid.RowSpan="2" Grid.Row="5">
+                    <Slider x:Name="SliderAge" Minimum="16" Maximum="90" Width="200" TickFrequency="1" Height="18" IsSnapToTickEnabled="True" Value="{Binding Age, Mode=TwoWay}"/>
+                    <TextBlock x:Name="TextBlockActualAge" Text="{Binding ElementName=SliderAge, Path=Value, StringFormat={}{0} lat, Mode=TwoWay}" 
+                               Height="16" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock x:Name="TextBlockWeight" Text="Waga" FontSize="19" Margin="15,5,5,5" Grid.Row="7"/>
+                <StackPanel HorizontalAlignment="Left" Margin="15,5,0,10" Orientation="Vertical" Grid.RowSpan="2" Grid.Row="8">
+                    <Slider x:Name="SliderWeight" Minimum="40" Maximum="120" Width="200" TickFrequency="1" Height="18" IsSnapToTickEnabled="True" Value="{Binding Weight, Mode=TwoWay}"/>
+                    <TextBlock x:Name="TextBlockActualWeight"  Text="{Binding ElementName=SliderWeight, Path=Value, StringFormat={}{0} kg, Mode=TwoWay}" 
+                               Height="16" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <Button x:Name="ButtonEdit" Command="{Binding Path=DataContext.Modify, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Content ="Edytuj" Width="80" Height="30" Margin="15,5,5,5" HorizontalAlignment="Left" Grid.Row="10" >
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource converter }">
+                            <Binding ElementName="TextBoxName" Path="IsNotEmpty"/>
+                            <Binding ElementName="TextBoxSurname" Path="IsNotEmpty"/>
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                </Button>
+                
+                <Button x:Name="ButtonaAppend" Command="{Binding Path=DataContext.Add, RelativeSource={RelativeSource AncestorType=Window}}"
+                        Content="Dodaj" Width="80" Height="30" Margin="135,5,5,5" HorizontalAlignment="Left" Grid.Row="10" />
+                <Button x:Name="ButtonaDelete" Command="{Binding Path=DataContext.Delete, RelativeSource={RelativeSource AncestorType=Window}}"  
+                        Content="Usuń" Width="80" Height="30" Margin="135,5,5,5" HorizontalAlignment="Left" Grid.Row="11" />
+            </Grid>
+        </StackPanel>
+        <ListBox x:Name="listBoxPeople" Grid.Column="1" Margin="5" FontSize="19" ItemsSource="{Binding ListOfPlayers, UpdateSourceTrigger=Explicit, Mode=TwoWay}" SelectedItem="{Binding SelectedPlayer}" >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Description}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
